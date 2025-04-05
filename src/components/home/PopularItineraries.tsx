@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ItineraryCard } from '@/components/ui/itinerary-card';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const POPULAR_ITINERARIES = [
   {
@@ -54,12 +55,14 @@ export function PopularItineraries() {
               Explore curated trip plans loved by our travelers
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            className="hidden md:flex items-center border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
-          >
-            View All <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link to="/itineraries">
+            <Button 
+              variant="outline" 
+              className="hidden md:flex items-center border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
+            >
+              View All <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -78,12 +81,14 @@ export function PopularItineraries() {
         </div>
         
         <div className="mt-8 text-center md:hidden">
-          <Button 
-            variant="outline" 
-            className="items-center border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
-          >
-            View All Itineraries <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link to="/itineraries">
+            <Button 
+              variant="outline" 
+              className="items-center border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
+            >
+              View All Itineraries <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

@@ -58,9 +58,11 @@ export function ItineraryCard({
       </Link>
       
       <div className="p-5 pt-0">
-        <Button variant="outline" className="w-full border-travel-teal text-travel-teal hover:bg-travel-teal hover:text-white">
-          View Itinerary
-        </Button>
+        <Link to={`/itineraries/${id}`}>
+          <Button variant="outline" className="w-full border-travel-teal text-travel-teal hover:bg-travel-teal hover:text-white">
+            View Itinerary
+          </Button>
+        </Link>
       </div>
     </div>
   );

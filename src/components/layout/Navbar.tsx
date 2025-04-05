@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe, PlaneLanding, Search, User } from 'lucide-react';
+import { Menu, X, Globe, PlaneLanding, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Navbar() {
@@ -40,11 +40,6 @@ export function Navbar() {
           <Link to="/search">
             <Button variant="ghost" size="icon" className="text-foreground/80 hover:text-foreground">
               <Search className="h-5 w-5" />
-            </Button>
-          </Link>
-          <Link to="/login">
-            <Button variant="ghost" size="icon" className="rounded-full text-foreground/80 hover:text-foreground">
-              <User className="h-5 w-5" />
             </Button>
           </Link>
           <Button className="hidden md:flex gap-2 bg-travel-blue hover:bg-travel-blue/90">
