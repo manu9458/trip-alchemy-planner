@@ -8,48 +8,104 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Loader2, Calendar, MapPin, Users, Plane } from 'lucide-react';
+import { Sparkles, Loader2, Calendar, MapPin, Users, Plane, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { generateTripPlan } from '@/lib/gemini';
+import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 const AIPlanner = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [formData, setFormData] = useState({
+    destination: '',
+    duration: '7',
+    travelers: 'couple',
+    budget: 'medium',
+    tripType: 'culture',
+    preferences: '',
+  });
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const { currentUser } = useAuth();
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+  
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if user is logged in
+    if (!currentUser) {
+      toast.error('Please log in to use the AI planner', {
+        action: {
+          label: 'Login',
+          onClick: () => window.location.href = '/login',
+        },
+      });
+      return;
+    }
+    
     setLoading(true);
     
-    // Simulate AI processing
-    setTimeout(() => {
-      setResult({
-        destination: "Japan",
-        duration: "10 days",
-        travelers: "Couple",
-        budget: "$3,000 - $4,000",
-        itinerary: [
+    try {
+      const prompt = `Create a detailed ${formData.duration}-day trip plan for ${formData.travelers} traveling to ${formData.destination || 'a destination of your choice'} with a ${formData.budget} budget. 
+      They are interested in ${formData.tripType} activities. 
+      Additional preferences: ${formData.preferences || 'None specified'}.
+      
+      Please format your response as a JSON object with the following structure:
+      {
+        "destination": "Name of destination",
+        "duration": "X days",
+        "travelers": "Type of travelers",
+        "budget": "Budget range in USD",
+        "itinerary": [
           {
-            day: 1,
-            location: "Tokyo",
-            activities: ["Arrive at Narita International Airport", "Check in at your hotel in Shinjuku", "Evening walk through Shinjuku for dinner and to see the neon lights"]
-          },
-          {
-            day: 2,
-            location: "Tokyo",
-            activities: ["Morning visit to Meiji Shrine", "Explore Harajuku and Takeshita Street", "Afternoon in Shibuya with famous crossing", "Evening Tokyo Tower visit"]
-          },
-          {
-            day: 3,
-            location: "Tokyo",
-            activities: ["Day trip to Nikko to see temples and shrines", "Visit Toshogu Shrine", "See Kegon Falls", "Return to Tokyo for dinner"]
+            "day": 1,
+            "location": "City/Area",
+            "activities": ["Activity 1", "Activity 2", "Activity 3"]
           }
         ],
-        recommendations: [
-          "Consider purchasing a Japan Rail Pass for cost-effective travel",
-          "Book hotels in advance, especially during cherry blossom season",
-          "Try local specialties like sushi, ramen, and okonomiyaki"
-        ]
-      });
+        "recommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"]
+      }`;
+      
+      const response = await generateTripPlan(prompt);
+      
+      // Extract JSON from response
+      const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/) || 
+                        response.match(/{[\s\S]*}/) || 
+                        null;
+                        
+      if (jsonMatch) {
+        const jsonString = jsonMatch[1] || jsonMatch[0];
+        const parsedResult = JSON.parse(jsonString);
+        setResult(parsedResult);
+      } else {
+        // If JSON parsing fails, create a structured object from the text response
+        const fallbackResult = {
+          destination: formData.destination || "Custom Destination",
+          duration: `${formData.duration} days`,
+          travelers: formData.travelers,
+          budget: formData.budget === 'budget' ? "$1,000 - $2,000" : 
+                 formData.budget === 'medium' ? "$2,000 - $4,000" : "$4,000+",
+          itinerary: [],
+          recommendations: [],
+          rawResponse: response
+        };
+        
+        setResult(fallbackResult);
+      }
+    } catch (error) {
+      console.error("Error generating trip plan:", error);
+      toast.error("Failed to generate trip plan. Please try again.");
+    } finally {
       setLoading(false);
-    }, 3000);
+    }
   };
   
   return (
@@ -63,6 +119,32 @@ const AIPlanner = () => {
               Tell us about your dream trip and our AI will create a personalized itinerary
             </p>
             
+            {!currentUser && !result && (
+              <Card className="mb-8">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="text-travel-coral h-5 w-5 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium">Sign in to use the AI planner</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Create an account or log in to use all features including saving your trip plans.</p>
+                      <div className="flex gap-3">
+                        <Link to="/login">
+                          <Button variant="outline" className="text-travel-blue border-travel-blue">
+                            Log In
+                          </Button>
+                        </Link>
+                        <Link to="/signup">
+                          <Button className="bg-travel-blue hover:bg-travel-blue/90">
+                            Create Account
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
             {!result ? (
               <Card>
                 <CardContent className="p-6">
@@ -73,13 +155,18 @@ const AIPlanner = () => {
                         id="destination" 
                         placeholder="e.g., Japan, Italy, Thailand..." 
                         className="w-full"
+                        value={formData.destination}
+                        onChange={handleChange}
                       />
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="duration">Trip Duration</Label>
-                        <Select defaultValue="7">
+                        <Select 
+                          value={formData.duration} 
+                          onValueChange={(value) => handleSelectChange('duration', value)}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select duration" />
                           </SelectTrigger>
@@ -95,7 +182,10 @@ const AIPlanner = () => {
                       
                       <div className="space-y-2">
                         <Label htmlFor="travelers">Who's traveling?</Label>
-                        <Select defaultValue="couple">
+                        <Select 
+                          value={formData.travelers} 
+                          onValueChange={(value) => handleSelectChange('travelers', value)}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select travelers" />
                           </SelectTrigger>
@@ -112,7 +202,10 @@ const AIPlanner = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="budget">Budget Range</Label>
-                        <Select defaultValue="medium">
+                        <Select 
+                          value={formData.budget} 
+                          onValueChange={(value) => handleSelectChange('budget', value)}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select budget" />
                           </SelectTrigger>
@@ -125,8 +218,11 @@ const AIPlanner = () => {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="trip-type">Trip Type</Label>
-                        <Select defaultValue="culture">
+                        <Label htmlFor="tripType">Trip Type</Label>
+                        <Select 
+                          value={formData.tripType} 
+                          onValueChange={(value) => handleSelectChange('tripType', value)}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select trip type" />
                           </SelectTrigger>
@@ -147,13 +243,15 @@ const AIPlanner = () => {
                         id="preferences" 
                         placeholder="Tell us more about what you're looking for in this trip. Any specific activities, must-see attractions, or preferences?"
                         className="min-h-[100px]"
+                        value={formData.preferences}
+                        onChange={handleChange}
                       />
                     </div>
                     
                     <Button 
                       type="submit" 
                       className="w-full bg-travel-blue hover:bg-travel-blue/90" 
-                      disabled={loading}
+                      disabled={loading || !currentUser}
                     >
                       {loading ? (
                         <>
@@ -212,39 +310,50 @@ const AIPlanner = () => {
                       </div>
                     </div>
                     
-                    <div className="mb-8">
-                      <h3 className="text-xl font-semibold mb-4">Daily Itinerary</h3>
-                      <div className="space-y-4">
-                        {result.itinerary.map((day: any) => (
-                          <div key={day.day} className="border border-border rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="bg-travel-blue text-white w-8 h-8 rounded-full flex items-center justify-center font-medium">
-                                {day.day}
+                    {result.itinerary && result.itinerary.length > 0 && (
+                      <div className="mb-8">
+                        <h3 className="text-xl font-semibold mb-4">Daily Itinerary</h3>
+                        <div className="space-y-4">
+                          {result.itinerary.map((day: any, index: number) => (
+                            <div key={index} className="border border-border rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="bg-travel-blue text-white w-8 h-8 rounded-full flex items-center justify-center font-medium">
+                                  {day.day}
+                                </div>
+                                <h4 className="font-semibold">{day.location}</h4>
                               </div>
-                              <h4 className="font-semibold">{day.location}</h4>
+                              <ul className="list-disc pl-6 space-y-1">
+                                {day.activities.map((activity: string, i: number) => (
+                                  <li key={i} className="text-muted-foreground">
+                                    {activity}
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
-                            <ul className="list-disc pl-6 space-y-1">
-                              {day.activities.map((activity: string, i: number) => (
-                                <li key={i} className="text-muted-foreground">
-                                  {activity}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                     
-                    <div>
-                      <h3 className="text-xl font-semibold mb-4">Travel Recommendations</h3>
-                      <ul className="list-disc pl-6 space-y-2">
-                        {result.recommendations.map((rec: string, i: number) => (
-                          <li key={i} className="text-muted-foreground">
-                            {rec}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    {result.recommendations && result.recommendations.length > 0 && (
+                      <div>
+                        <h3 className="text-xl font-semibold mb-4">Travel Recommendations</h3>
+                        <ul className="list-disc pl-6 space-y-2">
+                          {result.recommendations.map((rec: string, i: number) => (
+                            <li key={i} className="text-muted-foreground">
+                              {rec}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {result.rawResponse && (
+                      <div className="mt-8 p-4 bg-muted/30 rounded-lg">
+                        <h3 className="text-xl font-semibold mb-2">Complete AI Response</h3>
+                        <p className="text-sm whitespace-pre-wrap">{result.rawResponse}</p>
+                      </div>
+                    )}
                     
                     <div className="mt-8 text-center">
                       <Button className="bg-travel-teal hover:bg-travel-teal/90">Save This Itinerary</Button>
