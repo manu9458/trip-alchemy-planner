@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
@@ -10,12 +9,70 @@ import { MapPin, Calendar, Star, Users, Plane, Utensils, MapIcon, Camera, Info, 
 
 const mockDestinations = [
   {
-    id: "bali-indonesia",
-    title: "Bali",
-    location: "Indonesia",
-    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3",
+    id: "japan",
+    title: "Tokyo & Kyoto Highlights",
+    location: "Japan",
+    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3",
     rating: 4.8,
-    price: 1200,
+    price: 1299,
+    description: "Experience the perfect blend of ancient tradition and futuristic innovation in Japan. Explore Tokyo's vibrant neighborhoods and Kyoto's serene temples and gardens.",
+    activities: [
+      "Visit the historic Meiji Shrine",
+      "Explore the Fushimi Inari Shrine with thousands of torii gates",
+      "Experience the bustle of Shibuya Crossing",
+      "Relax in traditional Japanese gardens",
+      "Take a day trip to see Mount Fuji"
+    ],
+    accommodations: [
+      {
+        name: "Park Hyatt Tokyo",
+        price: 450,
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "Kyoto Century Hotel",
+        price: 320,
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "Hoshinoya Tokyo",
+        price: 580,
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3"
+      }
+    ],
+    restaurants: [
+      {
+        name: "Sukiyabashi Jiro",
+        cuisine: "Sushi",
+        price: "$$$$",
+        rating: 4.9
+      },
+      {
+        name: "Ichiran Ramen",
+        cuisine: "Ramen",
+        price: "$$",
+        rating: 4.6
+      },
+      {
+        name: "Tempura Kondo",
+        cuisine: "Tempura",
+        price: "$$$",
+        rating: 4.7
+      }
+    ],
+    bestTimeToVisit: "March to May (Cherry Blossom) and October to November (Fall Foliage)",
+    averageTemperature: "10°C to 27°C (50°F to 81°F)"
+  },
+  {
+    id: "bali",
+    title: "Bali Beach Paradise",
+    location: "Indonesia",
+    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=1738&auto=format&fit=crop&ixlib=rb-4.0.3",
+    rating: 4.7,
+    price: 899,
     description: "Known as the Island of the Gods, Bali appeals to travelers with its lush terraced rice fields, pristine beaches, and vibrant spiritual culture. Experience world-class surfing, diving, and yoga retreats.",
     activities: [
       "Visit the Sacred Monkey Forest Sanctuary",
@@ -68,12 +125,70 @@ const mockDestinations = [
     averageTemperature: "26°C to 33°C (79°F to 91°F)"
   },
   {
-    id: "santorini-greece",
-    title: "Santorini",
-    location: "Greece",
-    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=2274&auto=format&fit=crop&ixlib=rb-4.0.3",
+    id: "rome",
+    title: "Historical Rome Tour",
+    location: "Italy",
+    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1696&auto=format&fit=crop&ixlib=rb-4.0.3",
     rating: 4.9,
-    price: 1800,
+    price: 1099,
+    description: "Step back in time in the Eternal City, where ancient ruins coexist with vibrant modern life. Explore world-famous landmarks like the Colosseum and Vatican while enjoying exceptional cuisine and culture.",
+    activities: [
+      "Tour the ancient Colosseum and Roman Forum",
+      "Visit the Vatican Museums and St. Peter's Basilica",
+      "Throw a coin in the Trevi Fountain",
+      "Explore the Pantheon",
+      "Enjoy authentic Italian cuisine in Trastevere"
+    ],
+    accommodations: [
+      {
+        name: "Hotel Hassler Roma",
+        price: 650,
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1455587734955-081b22074882?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "The Inn at the Roman Forum",
+        price: 450,
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1455587734955-081b22074882?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "Hotel De Russie",
+        price: 550,
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1455587734955-081b22074882?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3"
+      }
+    ],
+    restaurants: [
+      {
+        name: "La Pergola",
+        cuisine: "Italian",
+        price: "$$$$",
+        rating: 4.9
+      },
+      {
+        name: "Roscioli",
+        cuisine: "Roman",
+        price: "$$$",
+        rating: 4.7
+      },
+      {
+        name: "Da Enzo al 29",
+        cuisine: "Roman",
+        price: "$$",
+        rating: 4.8
+      }
+    ],
+    bestTimeToVisit: "April to June, and September to October",
+    averageTemperature: "10°C to 30°C (50°F to 86°F)"
+  },
+  {
+    id: "santorini",
+    title: "Santorini Getaway",
+    location: "Greece",
+    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=1738&auto=format&fit=crop&ixlib=rb-4.0.3",
+    rating: 4.8,
+    price: 1199,
     description: "With its iconic white-washed buildings perched on cliffs overlooking the azure Aegean Sea, Santorini is one of the most visually stunning Greek islands. Famous for spectacular sunsets viewed from the village of Oia, this volcanic island offers black and red sand beaches, ancient ruins, and world-class wineries.",
     activities: [
       "Watch the sunset from Oia",
@@ -124,6 +239,122 @@ const mockDestinations = [
     ],
     bestTimeToVisit: "Late April to early November",
     averageTemperature: "15°C to 29°C (59°F to 84°F)"
+  },
+  {
+    id: "nyc",
+    title: "New York City Break",
+    location: "United States",
+    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3",
+    rating: 4.6,
+    price: 999,
+    description: "Experience the vibrant energy of the city that never sleeps. From iconic skyscrapers and world-class museums to diverse neighborhoods and culinary delights, New York City offers an unforgettable urban adventure.",
+    activities: [
+      "Visit the Metropolitan Museum of Art",
+      "Walk through Central Park",
+      "See a Broadway show",
+      "Explore different neighborhoods like SoHo and Greenwich Village",
+      "Take in the views from the Empire State Building or One World Observatory"
+    ],
+    accommodations: [
+      {
+        name: "The Plaza",
+        price: 750,
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1581170053168-9e3e4f6a2b69?q=80&w=1779&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "Ace Hotel New York",
+        price: 420,
+        rating: 4.6,
+        image: "https://images.unsplash.com/photo-1581170053168-9e3e4f6a2b69?q=80&w=1779&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "The Standard High Line",
+        price: 550,
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1581170053168-9e3e4f6a2b69?q=80&w=1779&auto=format&fit=crop&ixlib=rb-4.0.3"
+      }
+    ],
+    restaurants: [
+      {
+        name: "Le Bernardin",
+        cuisine: "Seafood",
+        price: "$$$$",
+        rating: 4.9
+      },
+      {
+        name: "Katz's Delicatessen",
+        cuisine: "Deli",
+        price: "$$",
+        rating: 4.7
+      },
+      {
+        name: "Gramercy Tavern",
+        cuisine: "American",
+        price: "$$$",
+        rating: 4.8
+      }
+    ],
+    bestTimeToVisit: "April to June, and September to November",
+    averageTemperature: "0°C to 30°C (32°F to 86°F)"
+  },
+  {
+    id: "paris",
+    title: "Romantic Paris Getaway",
+    location: "France",
+    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3",
+    rating: 4.7,
+    price: 1150,
+    description: "Immerse yourself in the charm and elegance of the City of Light. Paris combines stunning architecture, world-class art, and exquisite cuisine to create an unforgettable romantic experience.",
+    activities: [
+      "Visit the iconic Eiffel Tower",
+      "Explore the Louvre Museum",
+      "Stroll along the Seine River",
+      "Visit Notre Dame Cathedral and Montmartre",
+      "Enjoy French pastries at a local café"
+    ],
+    accommodations: [
+      {
+        name: "Ritz Paris",
+        price: 950,
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "Hotel Le Meurice",
+        price: 820,
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3"
+      },
+      {
+        name: "Hotel Montalembert",
+        price: 550,
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3"
+      }
+    ],
+    restaurants: [
+      {
+        name: "L'Ambroisie",
+        cuisine: "French",
+        price: "$$$$",
+        rating: 4.9
+      },
+      {
+        name: "Le Comptoir du Relais",
+        cuisine: "French",
+        price: "$$$",
+        rating: 4.7
+      },
+      {
+        name: "Bistrot Paul Bert",
+        cuisine: "French Bistro",
+        price: "$$",
+        rating: 4.8
+      }
+    ],
+    bestTimeToVisit: "April to June, and September to October",
+    averageTemperature: "5°C to 25°C (41°F to 77°F)"
   }
 ];
 
@@ -133,7 +364,6 @@ const DestinationDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, this would be an API call
     const foundDestination = mockDestinations.find(dest => dest.id === id);
     setDestination(foundDestination);
     setLoading(false);
