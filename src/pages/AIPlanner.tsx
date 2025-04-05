@@ -8,10 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Loader2, Calendar, MapPin, Users, Plane, AlertCircle } from 'lucide-react';
+import { Sparkles, Loader2, Calendar, MapPin, Users, Plane } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateTripPlan } from '@/lib/gemini';
-import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
 const AIPlanner = () => {
@@ -26,8 +25,6 @@ const AIPlanner = () => {
     preferences: '',
   });
   
-  const { currentUser } = useAuth();
-  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
@@ -39,17 +36,6 @@ const AIPlanner = () => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Check if user is logged in
-    if (!currentUser) {
-      toast.error('Please log in to use the AI planner', {
-        action: {
-          label: 'Login',
-          onClick: () => window.location.href = '/login',
-        },
-      });
-      return;
-    }
     
     setLoading(true);
     
@@ -119,32 +105,6 @@ const AIPlanner = () => {
               Tell us about your dream trip and our AI will create a personalized itinerary
             </p>
             
-            {!currentUser && !result && (
-              <Card className="mb-8">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="text-travel-coral h-5 w-5 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium">Sign in to use the AI planner</h3>
-                      <p className="text-sm text-muted-foreground mb-4">Create an account or log in to use all features including saving your trip plans.</p>
-                      <div className="flex gap-3">
-                        <Link to="/login">
-                          <Button variant="outline" className="text-travel-blue border-travel-blue">
-                            Log In
-                          </Button>
-                        </Link>
-                        <Link to="/signup">
-                          <Button className="bg-travel-blue hover:bg-travel-blue/90">
-                            Create Account
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
             {!result ? (
               <Card>
                 <CardContent className="p-6">
@@ -154,7 +114,7 @@ const AIPlanner = () => {
                       <Input 
                         id="destination" 
                         placeholder="e.g., Japan, Italy, Thailand..." 
-                        className="w-full"
+                        className="w-full text-foreground"
                         value={formData.destination}
                         onChange={handleChange}
                       />
@@ -242,7 +202,7 @@ const AIPlanner = () => {
                       <Textarea 
                         id="preferences" 
                         placeholder="Tell us more about what you're looking for in this trip. Any specific activities, must-see attractions, or preferences?"
-                        className="min-h-[100px]"
+                        className="min-h-[100px] text-foreground"
                         value={formData.preferences}
                         onChange={handleChange}
                       />
@@ -251,7 +211,7 @@ const AIPlanner = () => {
                     <Button 
                       type="submit" 
                       className="w-full bg-travel-blue hover:bg-travel-blue/90" 
-                      disabled={loading || !currentUser}
+                      disabled={loading}
                     >
                       {loading ? (
                         <>

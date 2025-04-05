@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, PlaneLanding, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export function HeroSection() {
   return (
@@ -32,7 +33,7 @@ export function HeroSection() {
                 <input 
                   type="text"
                   placeholder="Where do you want to go?"
-                  className="w-full pl-10 pr-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-travel-blue focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-travel-blue focus:border-transparent text-black"
                 />
               </div>
               <Button 
@@ -46,13 +47,17 @@ export function HeroSection() {
           </div>
           
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-            <Button size="lg" className="bg-travel-teal hover:bg-travel-teal/90 text-white">
-              <PlaneLanding className="mr-2 h-5 w-5" />
-              Plan My Trip
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-travel-navy">
-              View Popular Itineraries
-            </Button>
+            <Link to="/ai-planner">
+              <Button size="lg" className="bg-travel-teal hover:bg-travel-teal/90 text-white">
+                <PlaneLanding className="mr-2 h-5 w-5" />
+                Plan My Trip
+              </Button>
+            </Link>
+            <Link to="/itineraries">
+              <Button size="lg" variant="outline" className="border-white text-black bg-white hover:bg-white/90 hover:text-travel-navy">
+                View Popular Itineraries
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
