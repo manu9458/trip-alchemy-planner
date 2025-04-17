@@ -1,6 +1,7 @@
 # Welcome to your Lovable project
 
 ## Project info
+**Live URL**: https://trip-alchemy-planner-77.lovable.app/
 
 **URL**: https://lovable.dev/projects/3150d2b5-2871-4c15-8d6e-7eb3432f7ad5
 
